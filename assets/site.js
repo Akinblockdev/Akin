@@ -228,23 +228,29 @@
 
   /* ---------- section nav on project pages (Active / Inactive variants) ---------- */
   (function () {
+    var RX = /^(Active|Inactive)(.*)$/;
     var items = [].filter.call(D.querySelectorAll('a[href*="#"][data-framer-name]'), function (a) {
-      var n = a.getAttribute('data-framer-name'); return n === 'Active' || n === 'Inactive';
+      return RX.test(a.getAttribute('data-framer-name'));
     });
     if (!items.length) return;
+    // templates per variant family, e.g. "Active"/"Inactive" and "Active - mobile"/"Inactive - mobile"
     var tpl = {};
     items.forEach(function (a) { var n = a.getAttribute('data-framer-name'); if (!tpl[n]) tpl[n] = a.cloneNode(true); });
-    if (!tpl.Active || !tpl.Inactive) return;
+    // group items by the nav bar that holds them (closest ancestor containing several items)
     var groups = new Map();
     items.forEach(function (a) {
       var id = decodeURIComponent((a.getAttribute('href').split('#')[1] || ''));
       var target = id && D.getElementById(id); if (!target) return;
-      var p = a.parentElement; if (!groups.has(p)) groups.set(p, []);
-      groups.get(p).push({ el: a, target: target, text: a.textContent, href: a.getAttribute('href') });
+      var p = a.parentElement;
+      while (p && p !== D.body && items.filter(function (b) { return p.contains(b); }).length < 2) p = p.parentElement;
+      var m = a.getAttribute('data-framer-name').match(RX);
+      if (!groups.has(p)) groups.set(p, []);
+      groups.get(p).push({ el: a, target: target, text: a.textContent, href: a.getAttribute('href'), suffix: m[2] });
     });
     function render(it, state) {
-      if (it.el.getAttribute('data-framer-name') === state) return;
-      var n = tpl[state].cloneNode(true);
+      var name = state + it.suffix;
+      if (it.el.getAttribute('data-framer-name') === name || !tpl[name]) return;
+      var n = tpl[name].cloneNode(true);
       n.setAttribute('href', it.href);
       var p = n.querySelector('p') || n; p.textContent = it.text;
       it.el.replaceWith(n); it.el = n; wire(it);
