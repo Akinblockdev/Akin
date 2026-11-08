@@ -251,11 +251,15 @@
       var name = state + it.suffix;
       if (it.el.getAttribute('data-framer-name') === name || !tpl[name]) return;
       var n = tpl[name].cloneNode(true);
+      // the active pill carries Framer's pre-animation styles; show it in its final state
+      n.querySelectorAll('[data-framer-appear-id]').forEach(function (e) {
+        e.removeAttribute('data-framer-appear-id'); e.style.opacity = '1'; e.style.transform = 'none';
+      });
       n.setAttribute('href', it.href);
       var p = n.querySelector('p') || n; p.textContent = it.text;
       it.el.replaceWith(n); it.el = n; wire(it);
-      if (state === 'Active' && !reduce && n.animate) n.animate([{ opacity: 0.6 }, { opacity: 1 }], { duration: 250, easing: 'ease-out' });
     }
+    function pillOf(el) { return el && (el.querySelector('[data-framer-name="Tab BG"]') || el.firstElementChild); }
     function wire(it) {
       it.el.addEventListener('click', function (e) {
         e.preventDefault();
@@ -271,7 +275,18 @@
       groups.forEach(function (list) {
         var cur = 0;
         list.forEach(function (it, i) { if (it.target.getBoundingClientRect().top <= 120) cur = i; });
+        var prev = list.filter(function (it) { return /^Active/.test(it.el.getAttribute('data-framer-name')); })[0];
+        var from = prev && pillOf(prev.el) ? pillOf(prev.el).getBoundingClientRect() : null;
         list.forEach(function (it, i) { render(it, i === cur ? 'Active' : 'Inactive'); });
+        // slide the pill from the previous tab to the new one (Framer's shared layout animation)
+        var pill = pillOf(list[cur].el);
+        if (from && pill && prev !== list[cur] && !reduce && pill.animate) {
+          var to = pill.getBoundingClientRect();
+          if (to.width) pill.animate([
+            { transformOrigin: '0 50%', transform: 'translateX(' + (from.left - to.left) + 'px) scaleX(' + (from.width / to.width) + ')' },
+            { transformOrigin: '0 50%', transform: 'none' }
+          ], { duration: 400, easing: linOK ? spring(0.4, 0.8, 5.3 / (0.8 * 0.4)) : 'cubic-bezier(.3,1.2,.5,1)' });
+        }
       });
     }
     addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
