@@ -1,0 +1,4 @@
+#__framer-badge-container{display:none!important}
+/* primary button hover colour (Framer hover variant) */
+.framer-Nnyv0.framer-v-1njonpw{transition:background-color .3s cubic-bezier(.44,0,.56,1)}
+.framer-Nnyv0.framer-v-1njonpw.hover{background-color:var(--token-c999bed9-5533-4449-abb7-99ecc56b075f,rgba(4,17,31,.87))!important}
