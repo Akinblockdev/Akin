@@ -87,6 +87,20 @@
     if (r.top < innerHeight) runAppear(el); else io.observe(el);
   });
 
+  /* ---------- scroll-in reveals (e.g. the footer) ----------
+     Framer marks these with will-change:transform + opacity:0 and fades them in
+     once they are in view. Plain opacity:0 layers (like "Copied!") stay hidden. */
+  var rio = new IntersectionObserver(function (es) {
+    es.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var el = en.target; rio.unobserve(el);
+      if (reduce || !el.animate) { el.style.opacity = '1'; return; }
+      var a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, easing: 'cubic-bezier(.44,0,.56,1)', fill: 'both' });
+      a.onfinish = function () { el.style.opacity = '1'; a.cancel(); };
+    });
+  }, { threshold: 0.15 });
+  D.querySelectorAll('[style*="will-change:transform;opacity:0;"], [style*="will-change: transform; opacity: 0;"]').forEach(function (el) { rio.observe(el); });
+
   /* ---------- state morphing (hover / click / timed variants) ---------- */
   var LAYER = /^framer-[a-z0-9]{5,8}(-container)?$/;
   function kids(el) {
