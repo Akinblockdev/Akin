@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Akintunde Rufai — Product &amp; Web Designer</title>
+  <meta name="description" content="Product & web designer focused on clean systems, smooth interactions, and meaningful details." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="cursor" aria-hidden="true"><span>View</span></div>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="hero" id="top">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="container">
+      <div class="topbar">
+        <a href="#top" class="avatar" aria-label="Home">
+          <img src="assets/avatar.jpg" alt="Akintunde Rufai" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'avatar__fallback',textContent:'AR'}))" />
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <span class="nav__pill" aria-hidden="true"></span>
+          <a href="#about">About</a>
+          <a href="#work" class="is-active">Projects</a>
+          <a href="#motion">Motion</a>
+          <a href="#resume">Resume</a>
+        </nav>
+        <button class="theme-toggle" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </div>
+
+      <h1 class="hero__title reveal">
+        <span class="split">Akintunde Rufai</span>
+      </h1>
+      <p class="hero__sub reveal">Product &amp; web designer focused on clean systems,<br class="br" /> smooth interactions, and meaningful details.</p>
+      <div class="hero__cta reveal">
+        <a href="#work" class="btn btn--dark magnetic">My latest work</a>
+        <a href="mailto:akinrufai5@gmail.com" class="btn btn--light magnetic">Let's chat</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="work" class="work">
+    <div class="container grid">
+      <article class="card reveal" data-tint="violet">
+        <a href="#" class="card__media" data-cursor>
+          <img src="assets/cedar.png" alt="Cedar — cross-border payments website" loading="lazy" />
+          <div class="ph ph--cedar"><b>Fast, Reliable Cross-Border Payments</b><small>Cedar</small></div>
+        </a>
+        <div class="card__meta"><p>Simplifying cross-border payments for African businesses</p><span>Cedar • 2026</span></div>
+      </article>
+
+      <article class="card reveal" data-tint="white">
+        <a href="#" class="card__media" data-cursor>
+          <img src="assets/salario.png" alt="Salario — payroll mobile app" loading="lazy" />
+          <div class="ph ph--salario"><b>Your Money, Your Control</b><small>Salario</small></div>
+        </a>
+        <div class="card__meta"><p>Simplifying payroll and HR for growing businesses</p><span>Salario • 2025</span></div>
+      </article>
+
+      <article class="card reveal" data-tint="white">
+        <a href="#" class="card__media" data-cursor>
+          <img src="assets/thesiora.png" alt="Thesiora — academic writing app" loading="lazy" />
+          <div class="ph ph--thesiora"><b>Write better. Cite faster.</b><small>Thesiora</small></div>
+        </a>
+        <div class="card__meta"><p>Helping students write structured, well-cited academic reports</p><span>Thesiora • 2026</span></div>
+      </article>
+
+      <article class="card reveal" data-tint="pink">
+        <a href="#" class="card__media" data-cursor>
+          <img src="assets/clane.png" alt="ClanePOS — business payments website" loading="lazy" />
+          <div class="ph ph--clane"><b>Receive Money Faster With ClanePOS</b><small>Clane</small></div>
+        </a>
+        <div class="card__meta"><p>Helping businesses get paid faster</p><span>Clane • 2025</span></div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer" id="about">
+    <div class="container">
+      <hr />
+      <div class="footer__grid">
+        <div class="reveal">
+          <div class="footer__brand">
+            <span class="avatar avatar--sm"><img src="assets/avatar.jpg" alt="" onerror="this.remove()" /></span>
+            <strong>Akintunde Rufai</strong>
+          </div>
+          <p class="muted">Product &amp; web designer focused on clean systems,<br class="br" /> smooth interactions, and meaningful details.</p>
+          <small class="muted">akinrufai©<span id="year">2026</span> ↗</small>
+        </div>
+        <div class="reveal">
+          <h4>Links</h4>
+          <ul>
+            <li><a class="ulink" href="#work">Work</a></li>
+            <li><a class="ulink" href="#motion">Motion</a></li>
+            <li><a class="ulink" href="#about">About</a></li>
+            <li><a class="ulink" href="#resume">Resume</a></li>
+          </ul>
+        </div>
+        <div class="reveal" id="resume">
+          <h4>Contact</h4>
+          <ul>
+            <li><button class="ulink copy" data-copy="akinrufai5@gmail.com">akinrufai5@gmail.com</button></li>
+            <li><a class="ulink" href="mailto:akinrufai5@gmail.com?subject=Let's%20schedule%20a%20call">Schedule a call</a></li>
+          </ul>
+          <div class="socials">
+            <a href="https://www.linkedin.com/in/akin-rufai/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg></a>
+            <a href="https://www.instagram.com/akin_rufai/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5v.01"/></svg></a>
+            <a href="https://www.youtube.com/@akinrufai" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="js/main.js" defer></script>
+</body>
+</html>
