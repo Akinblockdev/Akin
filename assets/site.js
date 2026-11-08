@@ -65,6 +65,8 @@
     return c['default'];
   }
   function runAppear(el) {
+    if (el.__appeared) return; el.__appeared = true;
+    if (!el.hasAttribute('data-framer-appear-id')) { el.style.transition = 'opacity .6s, transform .6s'; el.style.opacity = 1; return; }
     var c = appear[el.getAttribute('data-framer-appear-id')], cfg = c && pick(c);
     if (!cfg) { el.style.transition = 'opacity .6s'; el.style.opacity = 1; return; }
     var ini = cfg.initial || {}, an = cfg.animate || {}, t = timing(an.transition);
@@ -75,15 +77,15 @@
     a.onfinish = function () { el.style.opacity = to.opacity; el.style.transform = to.transform; a.cancel(); };
   }
   var io = new IntersectionObserver(function (es) {
-    es.forEach(function (en) {
-      if (!en.isIntersecting) return;
-      io.unobserve(en.target);
-      if (en.target.hasAttribute('data-framer-appear-id')) runAppear(en.target);
-      else { en.target.style.transition = 'opacity .6s, transform .6s'; en.target.style.opacity = 1; }
-    });
+    es.forEach(function (en) { if (en.isIntersecting) { io.unobserve(en.target); runAppear(en.target); } });
   });
-  D.querySelectorAll('[data-framer-appear-id]').forEach(function (el) { io.observe(el); });
-  D.querySelectorAll('[style*="opacity:0.001"]:not([data-framer-appear-id])').forEach(function (el) { io.observe(el); });
+  var appearEls = [].slice.call(D.querySelectorAll('[data-framer-appear-id], [style*="opacity:0.001"]'));
+  appearEls.forEach(function (el) {
+    // Anything above the bottom of the first screen (including the nav, which
+    // starts above the top edge) animates in on load, like Framer does.
+    var r = el.getBoundingClientRect();
+    if (r.top < innerHeight) runAppear(el); else io.observe(el);
+  });
 
   /* ---------- state morphing (hover / click / timed variants) ---------- */
   var LAYER = /^framer-[a-z0-9]{5,8}(-container)?$/;
@@ -143,6 +145,7 @@
       var t = D.createElement('template'); t.innerHTML = x[2];
       var node = t.content.firstElementChild; if (!node) return;
       if (b && b.parentNode) b.parentNode.insertBefore(node, b); else p.appendChild(node);
+      node.querySelectorAll('video').forEach(setupVideo);
       enter(node, mode);
     });
   }
@@ -162,7 +165,10 @@
       if (!lists[sel]) lists[sel] = [].filter.call(D.querySelectorAll(sel), function (e) { return e.getClientRects().length > 0; });
       return lists[sel];
     }
-    (data.fx || []).filter(function (f) { return f.b === b; }).forEach(function (f) { var s = f.kind === 'timed' ? f.sel.split('.').slice(0, 2).join('.') : f.sel; f.root = inst(s)[f.i]; });
+    (data.fx || []).filter(function (f) { return f.b === b; }).forEach(function (f) {
+      var s = f.kind === 'timed' ? f.sel.split('.').slice(0, 2).join('.') : f.sel;
+      f.root = inst(s)[f.i];
+    });
     (data.fx || []).filter(function (f) { return f.b === b && f.root; }).forEach(function (f) {
       var root = f.root;
       if (f.kind === 'timed') {
@@ -201,11 +207,24 @@
   bind();
   var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(bind, 250); });
 
-  /* ---------- videos: play while in view ---------- */
+  /* ---------- videos ----------
+     Project cover videos (inside links to case studies) stay static and show
+     their cover frame. Videos on the project pages autoplay while in view. */
   var vio = new IntersectionObserver(function (es) {
     es.forEach(function (en) { var v = en.target; if (en.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); });
   });
-  D.querySelectorAll('video').forEach(function (v) { v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); vio.observe(v); });
+  function setupVideo(v) {
+    if (v.__setup) return; v.__setup = true;
+    v.muted = true; v.playsInline = true; v.setAttribute('playsinline', '');
+    var cover = v.closest('a[href*="case-studies/"]');
+    if (cover) {
+      v.autoplay = false; v.removeAttribute('autoplay'); v.pause();
+      if (!v.getAttribute('poster')) { v.preload = 'auto'; v.addEventListener('loadeddata', function () { try { v.currentTime = 0.01; } catch (e) {} }, { once: true }); }
+      return;
+    }
+    vio.observe(v);
+  }
+  D.querySelectorAll('video').forEach(setupVideo);
 
   /* ---------- hero "Sky" shader ---------- */
   D.querySelectorAll('[data-framer-component-type="Shader"] canvas').forEach(function (cv) {
