@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/case-studies/clearer-outsourcing.html", "destination": "/case-studies/thesiora.html", "permanent": true },
+    { "source": "/case-studies/clearer-outsourcing", "destination": "/case-studies/thesiora.html", "permanent": true }
+  ]
+}
