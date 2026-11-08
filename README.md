@@ -7,4 +7,4 @@ Portfolio site for Akintunde Rufai, exported from the Framer site https://akintu
 - `assets/site.css` small overrides
 - Images, videos and fonts load from Framer's CDN (framerusercontent.com).
 
-Hosted with GitHub Pages: https://akinblockdev.github.io/Akin/
+Deployed on Vercel: https://akin-six.vercel.app
