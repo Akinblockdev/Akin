@@ -226,6 +226,52 @@
   }
   D.querySelectorAll('video').forEach(setupVideo);
 
+  /* ---------- section nav on project pages (Active / Inactive variants) ---------- */
+  (function () {
+    var items = [].filter.call(D.querySelectorAll('a[href*="#"][data-framer-name]'), function (a) {
+      var n = a.getAttribute('data-framer-name'); return n === 'Active' || n === 'Inactive';
+    });
+    if (!items.length) return;
+    var tpl = {};
+    items.forEach(function (a) { var n = a.getAttribute('data-framer-name'); if (!tpl[n]) tpl[n] = a.cloneNode(true); });
+    if (!tpl.Active || !tpl.Inactive) return;
+    var groups = new Map();
+    items.forEach(function (a) {
+      var id = decodeURIComponent((a.getAttribute('href').split('#')[1] || ''));
+      var target = id && D.getElementById(id); if (!target) return;
+      var p = a.parentElement; if (!groups.has(p)) groups.set(p, []);
+      groups.get(p).push({ el: a, target: target, text: a.textContent, href: a.getAttribute('href') });
+    });
+    function render(it, state) {
+      if (it.el.getAttribute('data-framer-name') === state) return;
+      var n = tpl[state].cloneNode(true);
+      n.setAttribute('href', it.href);
+      var p = n.querySelector('p') || n; p.textContent = it.text;
+      it.el.replaceWith(n); it.el = n; wire(it);
+      if (state === 'Active' && !reduce && n.animate) n.animate([{ opacity: 0.6 }, { opacity: 1 }], { duration: 250, easing: 'ease-out' });
+    }
+    function wire(it) {
+      it.el.addEventListener('click', function (e) {
+        e.preventDefault();
+        var y = it.target.getBoundingClientRect().top + scrollY;
+        scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+        if (history.replaceState) history.replaceState(null, '', '#' + it.target.id);
+      });
+    }
+    groups.forEach(function (list) { list.forEach(wire); });
+    var ticking = false;
+    function update() {
+      ticking = false;
+      groups.forEach(function (list) {
+        var cur = 0;
+        list.forEach(function (it, i) { if (it.target.getBoundingClientRect().top <= 120) cur = i; });
+        list.forEach(function (it, i) { render(it, i === cur ? 'Active' : 'Inactive'); });
+      });
+    }
+    addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  })();
+
   /* ---------- hero "Sky" shader ---------- */
   D.querySelectorAll('[data-framer-component-type="Shader"] canvas').forEach(function (cv) {
     var ctx = cv.getContext('2d'); if (!ctx) return;
