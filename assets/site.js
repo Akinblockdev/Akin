@@ -94,9 +94,10 @@
     es.forEach(function (en) {
       if (!en.isIntersecting) return;
       var el = en.target; rio.unobserve(el);
-      if (reduce || !el.animate) { el.style.opacity = '1'; return; }
-      var a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600, easing: 'cubic-bezier(.44,0,.56,1)', fill: 'both' });
-      a.onfinish = function () { el.style.opacity = '1'; a.cancel(); };
+      var fromT = el.style.transform || 'none';
+      if (reduce || !el.animate) { el.style.opacity = '1'; el.style.transform = 'none'; return; }
+      var a = el.animate([{ opacity: 0, transform: fromT }, { opacity: 1, transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.44,0,.56,1)', fill: 'both' });
+      a.onfinish = function () { el.style.opacity = '1'; el.style.transform = 'none'; a.cancel(); };
     });
   }, { threshold: 0.15 });
   D.querySelectorAll('[style*="will-change:transform;opacity:0;"], [style*="will-change: transform; opacity: 0;"]').forEach(function (el) { rio.observe(el); });
