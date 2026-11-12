@@ -1,6 +1,12 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "redirects": [
-    { "source": "/case-studies/clearer-outsourcing.html", "destination": "/case-studies/thesiora.html", "permanent": true },
-    { "source": "/case-studies/clearer-outsourcing", "destination": "/case-studies/thesiora.html", "permanent": true }
+    { "source": "/case-studies/clane-merchant-payments(\\.html)?", "destination": "/clane", "permanent": true },
+    { "source": "/case-studies/cedar-cross-border-payments(\\.html)?", "destination": "/cedar", "permanent": true },
+    { "source": "/case-studies/salario-payroll-and-hr(\\.html)?", "destination": "/salario", "permanent": true },
+    { "source": "/case-studies/thesiora(\\.html)?", "destination": "/thesiora", "permanent": true },
+    { "source": "/case-studies/clearer-outsourcing(\\.html)?", "destination": "/thesiora", "permanent": true },
+    { "source": "/index(\\.html)?", "destination": "/", "permanent": true }
   ]
 }
