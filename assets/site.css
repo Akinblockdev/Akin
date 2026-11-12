@@ -43,4 +43,4 @@ html.dark [data-framer-name="BG"]{background:linear-gradient(112deg,rgba(255,255
 .theme-toggle .i-sun{display:none}
 html.dark .theme-toggle .i-sun{display:block}
 html.dark .theme-toggle .i-moon{display:none}
-@media (max-width:809px){.theme-toggle{right:24px}}
+@media (max-width:809px){.theme-toggle{top:103px;right:20px}}
