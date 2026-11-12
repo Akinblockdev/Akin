@@ -37,7 +37,7 @@ html.dark [data-framer-name="BG"]{background:linear-gradient(112deg,rgba(255,255
 [data-framer-name="Sky"]{display:none!important}
 
 /* theme toggle button */
-.theme-toggle{position:absolute;top:40px;right:64px;z-index:10;width:45px;height:45px;padding:0;border:0;border-radius:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+.theme-toggle{position:absolute;top:40px;right:max(64px,calc((100vw - 1280px) / 2 + 64px));z-index:10;width:45px;height:45px;padding:0;border:0;border-radius:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
   background:var(--token-57ba8170-867f-4c2d-9ec7-5e518ba3de02,rgba(218,218,230,.5));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   color:var(--token-28627c14-8287-467f-acdb-39bd94c81ffc,#04111f);transition:background-color .3s,color .3s,transform .2s}
 .theme-toggle:hover{transform:scale(1.05)}

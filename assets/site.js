@@ -334,18 +334,35 @@
   sync();
   D.body.appendChild(b);
 
-  /* on mobile, sit the button beside the main nav pill (the pair is centred together) */
+  /* keep the button inside the site's content width:
+     - pages with the main nav: right edge lines up with the content column (desktop),
+       or it sits beside the nav pill on mobile (the pair is centred together)
+     - project pages: it sits just right of the section nav on desktop */
   var navC = D.querySelector('.framer-thrm37-container');
+  var caseNav = !navC && D.querySelector('nav');
   if (navC) root.classList.add('has-mainnav');
+  function column() {
+    var e = D.querySelector('h1');
+    while (e && e !== D.body && getComputedStyle(e).maxWidth === 'none') e = e.parentElement;
+    return e && e !== D.body ? e : null;
+  }
   function place() {
-    if (!navC || innerWidth >= 810) { b.style.left = ''; return; }
-    var h = navC.querySelector('header') || navC;
-    var r = h.getBoundingClientRect();
-    // the nav's own appear animation moves it vertically only, so its right edge is stable
-    b.style.left = (r.right + scrollX + 6) + 'px';
+    var mobile = innerWidth < 810;
+    b.style.left = ''; b.style.right = ''; b.style.top = '';
+    if (navC && mobile) {
+      var r = (navC.querySelector('header') || navC).getBoundingClientRect();
+      b.style.left = (r.right + scrollX + 6) + 'px'; b.style.right = 'auto';
+    } else if (navC) {
+      var c = column(); if (!c) return;
+      var cr = c.getBoundingClientRect(), pr = parseFloat(getComputedStyle(c).paddingRight) || 0;
+      b.style.left = (cr.right - pr - b.offsetWidth + scrollX) + 'px'; b.style.right = 'auto';
+    } else if (caseNav && !mobile) {
+      var nr = caseNav.getBoundingClientRect();
+      if (!nr.width) return;
+      if (nr.right + 8 + b.offsetWidth <= innerWidth - 16) { b.style.left = (nr.right + scrollX + 8) + 'px'; b.style.right = 'auto'; b.style.top = ''; }
+      else b.style.top = '103px'; // below the section nav when it leaves no room beside it
+    }
   }
-  if (navC) {
-    place(); addEventListener('resize', place); addEventListener('load', place);
-    if (D.fonts && D.fonts.ready) D.fonts.ready.then(place);
-  }
+  place(); addEventListener('resize', place); addEventListener('load', place);
+  if (D.fonts && D.fonts.ready) D.fonts.ready.then(place);
 })();
