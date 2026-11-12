@@ -230,7 +230,8 @@
   function setupVideo(v) {
     if (v.__setup) return; v.__setup = true;
     v.muted = true; v.playsInline = true; v.setAttribute('playsinline', '');
-    var cover = v.closest('a[href*="case-studies/"]');
+    var onHome = location.pathname === '/' || /\/index(\.html)?$/.test(location.pathname);
+    var cover = onHome && v.closest('a[href^="/clane"],a[href^="/cedar"],a[href^="/salario"],a[href^="/thesiora"]');
     if (cover) {
       v.autoplay = false; v.removeAttribute('autoplay'); v.pause();
       if (!v.getAttribute('poster')) { v.preload = 'auto'; v.addEventListener('loadeddata', function () { try { v.currentTime = 0.01; } catch (e) {} }, { once: true }); }
