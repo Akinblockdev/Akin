@@ -1,4 +1,4 @@
-/* Site interactions: appear animations, hover/click/timed states, video, hero gradient */
+/* Site interactions: appear animations, hover/click/timed states, video */
 (function () {
   'use strict';
   var D = document;
@@ -309,36 +309,6 @@
     update();
   })();
 
-  /* ---------- hero "Sky" shader ---------- */
-  D.querySelectorAll('[data-framer-component-type="Shader"] canvas').forEach(function (cv) {
-    var ctx = cv.getContext('2d'); if (!ctx) return;
-    var W = 160, H = 90; cv.width = W; cv.height = H;
-    var blobs = [
-      { c: '244,196,252', d: '120,60,170', x: .50, y: .05, r: .55, ax: .10, ay: .10, s: .00011, p: 0 },
-      { c: '214,196,255', d: '80,60,190', x: .78, y: .25, r: .60, ax: .12, ay: .14, s: .00009, p: 1.7 },
-      { c: '196,214,255', d: '50,80,190', x: .95, y: .55, r: .55, ax: .08, ay: .12, s: .00012, p: 3.1 },
-      { c: '178,236,255', d: '30,110,170', x: .92, y: .02, r: .45, ax: .10, ay: .08, s: .00010, p: 4.4 },
-      { c: '232,206,255', d: '100,60,160', x: .65, y: .70, r: .50, ax: .14, ay: .10, s: .00008, p: 5.3 }
-    ];
-    var vis = true;
-    new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(cv);
-    function draw(t) {
-      ctx.globalCompositeOperation = 'source-over';
-      var dk = D.documentElement.classList.contains('dark');
-      ctx.fillStyle = dk ? '#0b0d10' : '#ffffff'; ctx.fillRect(0, 0, W, H);
-      blobs.forEach(function (b) {
-        var x = (b.x + Math.sin(t * b.s * 6.283 + b.p) * b.ax) * W;
-        var y = (b.y + Math.cos(t * b.s * 6.283 * 0.8 + b.p) * b.ay) * H;
-        var r = b.r * W;
-        var g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        g.addColorStop(0, 'rgba(' + (dk ? b.d : b.c) + ',' + (dk ? 0.55 : 0.95) + ')'); g.addColorStop(1, 'rgba(' + (dk ? b.d : b.c) + ',0)');
-        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      });
-    }
-    function loop(t) { if (vis) draw(t); if (!reduce) requestAnimationFrame(loop); }
-    draw(0); if (!reduce) requestAnimationFrame(loop);
-    D.addEventListener('themechange', function () { draw(performance.now()); });
-  });
 })();
 
 /* ---------- dark mode toggle (top-right button, remembered per visitor) ---------- */
@@ -363,4 +333,19 @@
   });
   sync();
   D.body.appendChild(b);
+
+  /* on mobile, sit the button beside the main nav pill (the pair is centred together) */
+  var navC = D.querySelector('.framer-thrm37-container');
+  if (navC) root.classList.add('has-mainnav');
+  function place() {
+    if (!navC || innerWidth >= 810) { b.style.left = ''; return; }
+    var h = navC.querySelector('header') || navC;
+    var r = h.getBoundingClientRect();
+    // the nav's own appear animation moves it vertically only, so its right edge is stable
+    b.style.left = (r.right + scrollX + 6) + 'px';
+  }
+  if (navC) {
+    place(); addEventListener('resize', place); addEventListener('load', place);
+    if (D.fonts && D.fonts.ready) D.fonts.ready.then(place);
+  }
 })();
