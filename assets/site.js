@@ -314,27 +314,53 @@
     var ctx = cv.getContext('2d'); if (!ctx) return;
     var W = 160, H = 90; cv.width = W; cv.height = H;
     var blobs = [
-      { c: '244,196,252', x: .50, y: .05, r: .55, ax: .10, ay: .10, s: .00011, p: 0 },
-      { c: '214,196,255', x: .78, y: .25, r: .60, ax: .12, ay: .14, s: .00009, p: 1.7 },
-      { c: '196,214,255', x: .95, y: .55, r: .55, ax: .08, ay: .12, s: .00012, p: 3.1 },
-      { c: '178,236,255', x: .92, y: .02, r: .45, ax: .10, ay: .08, s: .00010, p: 4.4 },
-      { c: '232,206,255', x: .65, y: .70, r: .50, ax: .14, ay: .10, s: .00008, p: 5.3 }
+      { c: '244,196,252', d: '120,60,170', x: .50, y: .05, r: .55, ax: .10, ay: .10, s: .00011, p: 0 },
+      { c: '214,196,255', d: '80,60,190', x: .78, y: .25, r: .60, ax: .12, ay: .14, s: .00009, p: 1.7 },
+      { c: '196,214,255', d: '50,80,190', x: .95, y: .55, r: .55, ax: .08, ay: .12, s: .00012, p: 3.1 },
+      { c: '178,236,255', d: '30,110,170', x: .92, y: .02, r: .45, ax: .10, ay: .08, s: .00010, p: 4.4 },
+      { c: '232,206,255', d: '100,60,160', x: .65, y: .70, r: .50, ax: .14, ay: .10, s: .00008, p: 5.3 }
     ];
     var vis = true;
     new IntersectionObserver(function (es) { vis = es[0].isIntersecting; }).observe(cv);
     function draw(t) {
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
+      var dk = D.documentElement.classList.contains('dark');
+      ctx.fillStyle = dk ? '#0b0d10' : '#ffffff'; ctx.fillRect(0, 0, W, H);
       blobs.forEach(function (b) {
         var x = (b.x + Math.sin(t * b.s * 6.283 + b.p) * b.ax) * W;
         var y = (b.y + Math.cos(t * b.s * 6.283 * 0.8 + b.p) * b.ay) * H;
         var r = b.r * W;
         var g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        g.addColorStop(0, 'rgba(' + b.c + ',0.95)'); g.addColorStop(1, 'rgba(' + b.c + ',0)');
+        g.addColorStop(0, 'rgba(' + (dk ? b.d : b.c) + ',' + (dk ? 0.55 : 0.95) + ')'); g.addColorStop(1, 'rgba(' + (dk ? b.d : b.c) + ',0)');
         ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       });
     }
     function loop(t) { if (vis) draw(t); if (!reduce) requestAnimationFrame(loop); }
     draw(0); if (!reduce) requestAnimationFrame(loop);
+    D.addEventListener('themechange', function () { draw(performance.now()); });
   });
+})();
+
+/* ---------- dark mode toggle (top-right button, remembered per visitor) ---------- */
+(function () {
+  var D = document, root = D.documentElement;
+  function save(v) { try { localStorage.setItem('theme', v); } catch (e) {} }
+  var b = D.createElement('button');
+  b.type = 'button'; b.className = 'theme-toggle';
+  b.innerHTML =
+    '<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>' +
+    '<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>';
+  function sync() {
+    var dark = root.classList.contains('dark');
+    b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    b.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    b.title = dark ? 'Light mode' : 'Dark mode';
+  }
+  b.addEventListener('click', function () {
+    var dark = root.classList.toggle('dark');
+    save(dark ? 'dark' : 'light'); sync();
+    D.dispatchEvent(new Event('themechange'));
+  });
+  sync();
+  D.body.appendChild(b);
 })();
